@@ -7,8 +7,13 @@
     <title>Mine Sweeper</title>
     <link rel="stylesheet" href="css/app.css">
 </head>
-<body onload="onInit()">
+<body onload="onInit(4,2)">
     <h1>Mine Sweeper</h1>
+    <div class="buttons">
+        <button onclick="onInit(4,2)">Easy</button>
+        <button onclick="onInit(8,14)">Medium</button>
+        <button onclick="onInit(12, 32)">Hard</button>
+    </div>
     <div class="board-container"></div>
     
     <div class="modal"></div>

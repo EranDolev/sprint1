@@ -23,12 +23,26 @@ var gLevel = [{
     mines: 14
 }]
 
-gBoard = buildBoard(4, 2)
-console.log(gBoard)
-renderBoard(gBoard, '.board-container')
+var gGameSize
+var gGameMines
+var gFirstClick
 
-function buildBoard(size, num) {
+// gBoard = buildBoard(4, 2)
+// renderBoard(gBoard, '.board-container')
+
+function buildBoard(size = 4, num = 2) {
+    gGame = {
+        isOn: true,
+        shownCount: 0,
+        markedCount: 0,
+        secsPassed: 0
+    }
+    gBoard = []
+    gMinesPositions = []
     const board = []
+    gGameSize = size
+    gGameMines = num
+    gFirstClick = false
 
     for (var i = 0; i < size; i++) {
         board.push([])
@@ -42,14 +56,23 @@ function buildBoard(size, num) {
             }
         }
     }
+    // setMines(size, num)
+    // for (var k = 0; k < gMinesPositions.length; k++) {
+    //     board[gMinesPositions[k].i][gMinesPositions[k].j].isMine = true
+    // }
+    // setMinesNegsCount(board)
+    gBoard = board
+    console.log(gBoard)
+    // onFirstClick(gBoard, size, num)
+}
+
+function onFirstClick(board, size, num){
     setMines(size, num)
     for (var k = 0; k < gMinesPositions.length; k++) {
         board[gMinesPositions[k].i][gMinesPositions[k].j].isMine = true
     }
     setMinesNegsCount(board)
-    return board
 }
-
 
 //returns array with positions for the mines according to board size and number of mines
 function setMines(size, num) {
@@ -58,15 +81,23 @@ function setMines(size, num) {
 
     for (var i = 0; i < size; i++) {
         for (var j = 0; j < size; j++) {
-            availablePositions.push({ i, j })
+            if (!gBoard[i][j].isShown) availablePositions.push({ i, j })
         }
     }
     console.log(availablePositions);
     for (var k = 0; k < num; k++) {
-        gMinesPositions.push(availablePositions.splice(getRandomInt(0, size ** 2), 1)[0])
+        gMinesPositions.push(availablePositions.splice(getRandomInt(0, availablePositions.length), 1)[0])
     }
 }
 
+function onInit(size, mines) {
+    var elModal = document.querySelector(".modal")
+    gGame.isOn = true
+    elModal.style.display = 'none'
+
+    buildBoard(size, mines)
+    renderBoard(gBoard, '.board-container')
+}
 
 function setMinesNegsCount(board) {
     for (var i = 0; i < board.length; i++) {
@@ -97,15 +128,19 @@ function setCellMinesNegsCount(board, rowIdx, colIdx) {
 
 function onCellClicked(elCell, i, j) {
 
-
     var elModal = document.querySelector(".modal")
+    if(!gFirstClick){
+        onFirstClick(gBoard, gGameSize,gGameMines)
+        gFirstClick = true
+    }
 
-    if (gGame.isOn === false) return
+    if (!gGame.isOn) return
     if (gBoard[i][j].isShown) return
     if (gBoard[i][j].isMarked) return
 
     if (gBoard[i][j].isMine) {
         gGame.isOn = false
+        gFirstClick = false
         elCell.innerText = MINE
         elModal.innerText = 'You Lost'
         elModal.style.display = 'block'
@@ -116,7 +151,8 @@ function onCellClicked(elCell, i, j) {
         elCell.classList.add('cell-revealed')
         if (checkGameOver()) {
             gGame.isOn = false
-            elModal.innerText = 'You Won'
+            gFirstClick = false
+            elModal.innerText = 'You Won!!!'
             elModal.style.display = 'block'
         }
     }
@@ -127,7 +163,7 @@ function onCellClicked(elCell, i, j) {
 function checkGameOver() {
     console.log('marked:', gGame.markedCount)
     console.log('Shown:', gGame.shownCount)
-    if (gGame.shownCount + gGame.markedCount === (gLevel[0].size ** 2) && gGame.markedCount === gLevel[0].mines) return true
+    if (gGame.shownCount + gGame.markedCount === (gGameSize ** 2) && gGame.markedCount === gGameMines) return true
 }
 
 function onCellMarked(elCell, rowIdx, colIdx) {
@@ -141,7 +177,8 @@ function onCellMarked(elCell, rowIdx, colIdx) {
         elCell.innerText = FLAG
         if (checkGameOver()) {
             gGame.isOn = false
-            elModal.innerText = 'You Won'
+            gFirstClick = false
+            elModal.innerText = 'You Won!!!'
             elModal.style.display = 'block'
         }
     } else {
