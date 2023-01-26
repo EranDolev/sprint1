@@ -28,6 +28,8 @@ var gSeconds
 var gStartTime
 var gSafePosition
 var gSafeClicksRemain
+var gIsHint
+var gHintCount
 
 
 function buildBoard(size, num) {
@@ -44,18 +46,24 @@ function buildBoard(size, num) {
     gLevel.size = size
     gLevel.mines = num
     gFirstClick = true
+    gIsHint = false
     gSeconds = 0
     gSafeClicksRemain = 3
+    gHintCount = 3
     clearInterval(gTimeInterval)
 
     var elH2Span = document.querySelector("h2 span")
     var elLives = document.querySelector("h3 span")
     var elH4 = document.querySelector('h4 span')
     var elSafeBtn = document.querySelector('.safe-button span')
+    var elHintBtn = document.querySelector('.hint-button')
+    var elHintBtnSpan = document.querySelector('.hint-button span')
     elH2Span.innerText = gLevel.mines - gGame.markedCount
     elLives.innerText = '❤️❤️❤️'
     elH4.innerText = gSeconds
     elSafeBtn.innerText = gSafeClicksRemain
+    elHintBtnSpan.innerText = gHintCount
+    elHintBtn.classList.remove('hint-on')
 
 
     for (var i = 0; i < size; i++) {
@@ -71,9 +79,7 @@ function buildBoard(size, num) {
             }
         }
     }
-
-    console.log(gBoard)
-
+    console.log(gHintCount);
 }
 
 //this function only works when it is the first move of the game, being called from onCellClicked function
@@ -85,7 +91,7 @@ function onFirstClick(board, size, num, rowIdx, colIdx) {
     setMinesNegsCount(board)
 }
 
-//inserts gMinesPositions array positions for the mines according to board size and number of mines
+//inserts positions to gMinesPositions array for the mines according to board size and number of mines
 function setMines(size, num, rowIdx, colIdx) {
 
     var availablePositions = []
@@ -101,7 +107,7 @@ function setMines(size, num, rowIdx, colIdx) {
     }
 }
 
-//starts th sequence for creating the game
+//starts the sequence for creating the game
 function onInit(size, mines) {
     var elModal = document.querySelector(".modal")
     var elSmiley = document.querySelector(".smiley button")
@@ -151,6 +157,11 @@ function onCellClicked(elCell, i, j) {
     var elLives = document.querySelector("h3 span")
     console.log(elSmiley)
 
+    if (gIsHint) {
+        getHint(i, j)
+        return
+    }
+
     if (gFirstClick) {
         onFirstClick(gBoard, gLevel.size, gLevel.mines, i, j)
         console.log(gBoard)
@@ -159,9 +170,11 @@ function onCellClicked(elCell, i, j) {
         gFirstClick = false
     }
 
+
     if (!gGame.isOn) return
     if (gBoard[i][j].isShown) return
     if (gBoard[i][j].isMarked) return
+    if (gBoard[i][j].isMine && elCell.style.backgroundColor === 'red') return //can't step on a mine twice
 
     if (gBoard[i][j].isMine && gGame.lives < 2) {
         gGame.isOn = false
@@ -171,14 +184,14 @@ function onCellClicked(elCell, i, j) {
         elModal.style.display = 'block'
         elSmiley.innerText = '🤯'
         elLives.innerText = ''
+        revealMines(elCell)
     } else if (gBoard[i][j].isMine) {
         gGame.lives--
+        elCell.style.backgroundColor = 'red'
         if (gGame.lives === 2) {
             elLives.innerText = '❤️❤️'
-            elCell.style.backgroundColor = 'red'
         } else {
             elLives.innerText = '❤️'
-            elCell.style.backgroundColor = 'red'
         }
     } else {
         if (gBoard[i][j].minesAroundCount === 0 || gBoard[i][j].minesAroundCount === '') {
@@ -253,12 +266,10 @@ function expandShown(board, rowIdx, colIdx) {
 
 function styleLevel(num) {
     var elLevels = document.querySelectorAll('.buttons button')
-    console.log(elLevels)
     elLevels[0].classList.remove('chosen-level')
     elLevels[1].classList.remove('chosen-level')
     elLevels[2].classList.remove('chosen-level')
     if (num === 4) {
-        console.log(elLevels)
         elLevels[0].classList.add('chosen-level')
     } else if (num === 8) {
         elLevels[1].classList.add('chosen-level')
@@ -267,7 +278,6 @@ function styleLevel(num) {
 
 function updateTime(currentTime) {
     var elH4 = document.querySelector('h4 span')
-    console.log(elH4);
     var date = new Date() - currentTime
     gSeconds = Math.trunc(date / 1000)
     elH4.innerText = gSeconds
@@ -278,7 +288,7 @@ function safeClick() {
     var elSafeBtn = document.querySelector('.safe-button span')
     gSafePosition = []
     if (gSafeClicksRemain === 0 || gFirstClick) return
-    gSafeClicksRemain --
+    gSafeClicksRemain--
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard[0].length; j++) {
             if (!gBoard[i][j].isShown && !gBoard[i][j].isMine && !gBoard[i][j].isMarked) {
@@ -290,9 +300,83 @@ function safeClick() {
     var elCell = document.querySelector(`.cell-${gSafePosition[0].i}-${gSafePosition[0].j}`)
     elCell.classList.add('safe')
     elSafeBtn.innerText = gSafeClicksRemain
-    setTimeout(clearSafeClick,1000,elCell)
+    setTimeout(clearSafeClick, 1000, elCell)
 }
 
-function clearSafeClick(elCell){
+function clearSafeClick(elCell) {
     elCell.classList.remove('safe')
+}
+
+function revealMines(elCell1) {
+    elCell1.style.backgroundColor = 'red'
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[0].length; j++) {
+            if (gBoard[i][j].isMine) {
+                var elCell2 = document.querySelector(`.cell-${i}-${j}`)
+                elCell2.innerText = MINE
+            }
+        }
+    }
+}
+
+function getHint(rowIdx, colIdx) {
+    var elHintBtn = document.querySelector('.hint-button span')
+    gHintCount--
+    for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
+        if (i < 0 || i >= gBoard.length) continue
+
+        for (var j = colIdx - 1; j <= colIdx + 1; j++) {
+            if (j < 0 || j >= gBoard[0].length) continue
+            var elCell = document.querySelector(`.cell-${i}-${j}`)
+            if (!(gBoard[i][j].isMarked) || (gBoard[i][j].isShown)) {
+                if (gBoard[i][j].isMine) {
+                    elCell.innerText = MINE
+                    elCell.style.borderColor = 'red'
+                } else if ((gBoard[i][j].isShown)) {
+                        continue
+                    } else if (gBoard[i][j].minesAroundCount > -1 || gBoard[i][j].minesAroundCount === '') {
+                    elCell.innerText = gBoard[i][j].minesAroundCount
+                    elCell.style.borderColor = 'red'
+                }
+            }
+        }
+    }
+    elHintBtn.innerText = gHintCount
+    gIsHint = false
+    setTimeout(removeGetHint, 2000, rowIdx, colIdx)
+}
+
+function turnOnOffHint(elCell) {
+    if (gIsHint || gFirstClick || gHintCount === 0) {
+        gIsHint = false
+        elCell.classList.remove('hint-on')
+    } else {
+        gIsHint = true
+        elCell.classList.add('hint-on')
+    }
+}
+
+function removeGetHint(rowIdx, colIdx) {
+    var elHintBtn = document.querySelector('.hint-button')
+    for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
+        if (i < 0 || i >= gBoard.length) continue
+
+        for (var j = colIdx - 1; j <= colIdx + 1; j++) {
+            if (j < 0 || j >= gBoard[0].length) continue
+            var elCell1 = document.querySelector(`.cell-${i}-${j}`)
+            console.log('inner text', gBoard[i][j].isMarked)
+            if (!(gBoard[i][j].isMarked) || (gBoard[i][j].isShown)) {
+                if (gBoard[i][j].isMine) {
+                    elCell1.innerText = ''
+                    elCell1.style.borderColor = 'black'
+                } else if ((gBoard[i][j].isShown)) {
+                    continue
+                } else  if (gBoard[i][j].minesAroundCount > -1 || gBoard[i][j].minesAroundCount === '') {
+                    elCell1.innerText = ''
+                    elCell1.style.borderColor = 'black'
+                }
+            }
+        }
+    }
+    elHintBtn.classList.remove('hint-on')
 }

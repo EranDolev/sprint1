@@ -29,16 +29,17 @@ td {
     display: none;
     background-color: lightseagreen;
     border: 5px solid black;
-    width: 300px;
-    padding: 20px;
+    width: 200px;
+    height: 30px;
+    /* padding: 20px; */
     color: white;
     text-align: center;
-    font-size: 30px;
+    font-size: 25px;
 
 
     position: absolute;
-    top: 450px;
-    left: calc(50% - 175px);
+    top: 365px;
+    left: calc(55.5% - 175px);
 }
 
 .buttons {
@@ -113,6 +114,7 @@ h4 span {
     border: 5px solid black;
     padding: 8px;
     background-color: lightcyan;
+    padding:  5px 10px;
 }
 
 .safe {
@@ -132,6 +134,23 @@ h4 span {
     font-style: italic;
     box-shadow: 0px 5px 0px lightgrey;
     cursor: pointer;
+}
+
+.hint-button{
+    width: 200px;
+    font-size: 20px;
+    font-weight: bold;
+    font-style: italic;
+    box-shadow: 5px 5px 5px lightgrey;
+    cursor: pointer;
+    background-color: rgb(245, 214, 186);
+}
+
+.hint-on{
+    background-color: yellow;
+    box-shadow: 0px 5px 0px white;
+    color: blue;
+    border-color: blue;
 }
 
 /* .cell-covered {
