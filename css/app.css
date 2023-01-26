@@ -18,6 +18,7 @@ td {
     text-align: center;
     font-size: 1.5em;
     background-color: lightgray;
+    cursor: pointer;
 }
 
 .cell-revealed {
@@ -36,24 +37,101 @@ td {
 
 
     position: absolute;
-    top: 300px;
+    top: 450px;
     left: calc(50% - 175px);
 }
 
-.buttons{
+.buttons {
     text-align: center;
+    margin-top: 10px;
 }
 
-.buttons button{
+.buttons button {
     width: 180px;
     height: 50px;
     background-color: lightgoldenrodyellow;
     font-size: 20px;
     font-style: italic;
+    cursor: pointer;
+    box-shadow: 0px 5px 0px lightgrey;
 }
 
-.board-container{
+.board-container {
     margin-top: 10px;
+}
+
+.smiley {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.smiley button {
+    width: 75px;
+    height: 75px;
+    font-size: 30px;
+    cursor: pointer;
+    box-shadow: 0px 5px 0px lightgrey;
+}
+
+.chosen-level {
+    color: rgb(230, 20, 177);
+    border-color: rgb(230, 20, 177);
+    font-weight: 850;
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    background-color: lightgray;
+    padding: 20px;
+    font-family: cursive;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+h2 span {
+    color: brown;
+    font-size: 30px;
+}
+
+h3 {
+    text-align: center;
+    font-size: 25px;
+    margin: 10px;
+}
+
+h4 {
+    font-size: 20px;
+    text-align: center;
+}
+
+h4 span {
+    border-radius: 20%;
+    border: 5px solid black;
+    padding: 8px;
+    background-color: lightcyan;
+}
+
+.safe {
+    background-color: green;
+    transition: 1s;
+}
+
+.safe-div{
+    text-align: center;
+}
+
+.safe-button{
+    width: 200px;
+    font-size: 20px;
+    background-color: lightgreen;
+    font-weight: bold;
+    font-style: italic;
+    box-shadow: 0px 5px 0px lightgrey;
+    cursor: pointer;
 }
 
 /* .cell-covered {

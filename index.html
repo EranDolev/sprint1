@@ -9,14 +9,24 @@
 </head>
 <body onload="onInit(4,2)">
     <h1>Mine Sweeper</h1>
-    <div class="buttons">
-        <button onclick="onInit(4,2)">Easy</button>
-        <button onclick="onInit(8,14)">Medium</button>
-        <button onclick="onInit(12, 32)">Hard</button>
+    <div class="smiley">
+        <button onclick="onInit(gLevel.size,gLevel.mines)">😃</button>
     </div>
+    <div class="safe-div">
+        <button class="safe-button" onclick="safeClick()">Safe Clicks: <span></span></button>
+    </div>
+    <div class="buttons">
+        <button class="easy" onclick="onInit(4,2)">Easy</button>
+        <button class="medium" onclick="onInit(8,14)">Medium</button>
+        <button class="hard" onclick="onInit(12, 32)">Hard</button>
+    </div>
+    <h4>Time: <span></span></h4>
+    <h2>Remaining Mines: <span></span></h2>
+    <h3>Lives: <span></span></h3>
     <div class="board-container"></div>
     
     <div class="modal"></div>
+    <footer>Eran Dolev - Coffeeright Jan 2023 ©️</footer>
     <script src="js/util.js"></script>
     <script src="js/mine sweeper.js"></script>
 </body>
