@@ -75,9 +75,8 @@ td {
 }
 
 .chosen-level {
-    color: rgb(230, 20, 177);
-    border-color: rgb(230, 20, 177);
     font-weight: 850;
+    border-width: 5px;
 }
 
 footer {
@@ -114,7 +113,7 @@ h4 span {
     border: 5px solid black;
     padding: 8px;
     background-color: lightcyan;
-    padding:  5px 10px;
+    padding: 5px 10px;
 }
 
 .safe {
@@ -122,11 +121,11 @@ h4 span {
     transition: 1s;
 }
 
-.safe-div{
+.cheats {
     text-align: center;
 }
 
-.safe-button{
+.safe-button {
     width: 200px;
     font-size: 20px;
     background-color: lightgreen;
@@ -136,7 +135,7 @@ h4 span {
     cursor: pointer;
 }
 
-.hint-button{
+.hint-button {
     width: 200px;
     font-size: 20px;
     font-weight: bold;
@@ -146,13 +145,34 @@ h4 span {
     background-color: rgb(245, 214, 186);
 }
 
-.hint-on{
+.hint-on {
     background-color: yellow;
     box-shadow: 0px 5px 0px white;
     color: blue;
     border-color: blue;
 }
 
-/* .cell-covered {
+.easy {
+    color: green;
+    border-color: green;
+}
 
-} */
+.medium {
+    color: orange;
+    border-color: orange;
+}
+
+.hard {
+    color: red;
+    border-color: red;
+}
+
+.undo-button {
+    width: 200px;
+    font-size: 20px;
+    font-weight: bold;
+    font-style: italic;
+    box-shadow: 5px 5px 5px lightgrey;
+    cursor: pointer;
+    background-color: rgb(255, 0, 0); 
+}
